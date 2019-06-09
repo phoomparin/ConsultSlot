@@ -33,23 +33,26 @@ export function getRemainingTimeFromDuration(durationString: string, currentTime
 }
 
 export function useTimeDisplay(timeSlot: string) {
-  const [remainingTime, setRemainingTime] = useState('0:00')
-  const [currentTime, setCurrentTime] = useState('0:00')
+  const [remainingTime, setRemainingTime] = useState('N/A')
+  const [currentTime, setCurrentTime] = useState('N/A')
 
   let timer: Timer
 
   useEffect(() => {
-    if (!timeSlot) return
+    if (timeSlot) {
+      timer = setInterval(() => {
+        const current = DateTime.local().toFormat('hh:mm')
+        setCurrentTime(current)
 
-    timer = setInterval(() => {
-      const current = DateTime.local().toFormat('hh:mm')
-      setCurrentTime(current)
+        const remaining = getRemainingTimeFromDuration(timeSlot)
+        if (!remaining) return clearInterval(timer)
 
-      const remaining = getRemainingTimeFromDuration(timeSlot)
-      if (!remaining) return clearInterval(timer)
+        setRemainingTime(remaining)
+      }, 1000)
+    } else {
+      clearInterval(timer)
+    }
 
-      setRemainingTime(remaining)
-    }, 1000)
 
     return () => clearInterval(timer)
   }, [remainingTime, currentTime])

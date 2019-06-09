@@ -31,6 +31,10 @@ function getMentorName(mentor: string) {
   return 'พี่' + mentor
 }
 
+function shouldUpdateSlot(remainingTime: string, currentSlot: string) {
+  return remainingTime === '00:00'
+}
+
 export const App = () => {
   const [slotNumber, setSlotNumber] = useState(0)
   const currentSlot = timeSlots[slotNumber]
@@ -39,8 +43,8 @@ export const App = () => {
   if (!currentSlot) return null
 
   useEffect(() => {
-    if (shouldProceedSlot(remainingTime, )) {
-
+    if (shouldUpdateSlot(remainingTime, currentSlot)) {
+      setSlotNumber(slotNumber + 1)
     }
   }, [remainingTime])
 
@@ -48,10 +52,14 @@ export const App = () => {
 
   window.setSlotNumber = setSlotNumber
 
+  function forceNext() {
+    setSlotNumber(slotNumber + 1)
+  }
+
   return (
     <Container className='app-container'>
       <div>
-        <div className='current-time-slot'>เวลา {currentTime} (ช่วง {currentSlot})</div>
+        <div className='current-time-slot' onClick={forceNext}>เวลา {currentTime} (ช่วง {currentSlot})</div>
         <div className='remaining-time'>เหลือเวลา <strong>{remainingTime}</strong> นาที</div>
       </div>
 
