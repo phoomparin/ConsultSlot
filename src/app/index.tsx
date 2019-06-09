@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from '@emotion/styled'
 import * as firebase from 'firebase/app'
 import {queues} from './consultQueue'
@@ -37,6 +37,12 @@ export const App = () => {
   const [remainingTime, currentTime] = useTimeDisplay(currentSlot)
 
   if (!currentSlot) return null
+
+  useEffect(() => {
+    if (shouldProceedSlot(remainingTime, )) {
+
+    }
+  }, [remainingTime])
 
   const consultQueues = Object.entries(queues[currentSlot])
 
