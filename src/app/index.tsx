@@ -36,7 +36,7 @@ export const App = () => {
   const currentSlot = timeSlots[slotNumber]
   const [remainingTime, currentTime] = useTimeDisplay(currentSlot)
 
-  if  (!currentSlot) return null
+  if (!currentSlot) return null
 
   const consultQueues = Object.entries(queues[currentSlot])
 
