@@ -35,6 +35,28 @@ function shouldUpdateSlot(remainingTime: string, currentSlot: string) {
   return remainingTime === '00:00'
 }
 
+// function FlashChanges({remainingTime: string}) {
+//   const [isFlashing, setFlashing] = useState(false)
+//
+//   useEffect(() => {
+//     if (remainingTime === '00:00') {
+//       setFlashing(true)
+//
+//       setTimeout(() => {
+//         setFlashing(false)
+//       }, 5000)
+//     }
+//   }, [remainingTime])
+//
+//   if (!isFlashing) return null
+//
+//   return (
+//     <div>
+//       <h1>หมดเวลาแล้วจ้าาาา</h1>
+//     </div>
+//   )
+// }
+
 export const App = () => {
   const [slotNumber, setSlotNumber] = useState(0)
   const currentSlot = timeSlots[slotNumber]
@@ -68,6 +90,8 @@ export const App = () => {
           <strong>{project}</strong> <span className='mentor-name'>พบ{getMentorName(mentor)}</span>
         </div>
       ))}</div>
+
+      {/*<FlashChanges remainingTime='00:00' />*/}
     </Container>
   )
 }
