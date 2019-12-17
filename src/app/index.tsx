@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
-import * as firebase from 'firebase/app'
-import {queues} from './consultQueue'
 
-import {useTimeDisplay} from '../time-slot/time-helper'
+import {useCurrentTime} from './useCurrentTime'
+import {useMentorSlots} from './useCurrentSlot'
+import {useRemainingTimeInSlot} from './useRemainingTimeInSlot'
+import {tracks, startTime, maxSlots} from './consultQueue'
 
 const Container = styled.div`
   display: grid;
@@ -13,85 +14,75 @@ const Container = styled.div`
   align-items: center;
   
   padding: 3em 5em;
-
-  color: #2d2d30;
-  background: #f1f3f5;
 `
 
-const consultCol = firebase.firestore().collection('consult')
-
-// const queues = value.docs.map(doc => doc.data())
-// const slots = queues.filter(x => x.slot === currentSlot) as ConsultQueue[]
-
-const timeSlots = Object.keys(queues)
-
-function getMentorName(mentor: string) {
-  if (mentor === 'Good Factory') return 'ทีมงาน Good Factory'
-
-  return 'พี่' + mentor
+interface MentorDisplayProps {
+  data: string[]
 }
 
-function shouldUpdateSlot(remainingTime: string, currentSlot: string) {
-  return remainingTime === '00:00'
+function MentorDisplay({data}: MentorDisplayProps) {
+  return (
+    <div>
+      {data.map((group, i) => (
+        <div className='project-item' key={i}>
+          <strong className='group-name'>กลุ่ม {group}</strong> <span className='mentor-name'>พบ{tracks[i]}</span>
+        </div>
+      ))}
+    </div>
+  )
 }
 
-// function FlashChanges({remainingTime: string}) {
-//   const [isFlashing, setFlashing] = useState(false)
-//
-//   useEffect(() => {
-//     if (remainingTime === '00:00') {
-//       setFlashing(true)
-//
-//       setTimeout(() => {
-//         setFlashing(false)
-//       }, 5000)
-//     }
-//   }, [remainingTime])
-//
-//   if (!isFlashing) return null
-//
-//   return (
-//     <div>
-//       <h1>หมดเวลาแล้วจ้าาาา</h1>
-//     </div>
-//   )
-// }
+function getProgress(time: string, slotDuration: number = 10) {
+  const [min, sec] = time.split(':').map(Number)
+
+  return Math.round(((min * 60 + sec) / (slotDuration * 60)) * 100)
+}
+
+// prettier-ignore
+const ProgressContainer = styled.div<{progress: number}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+
+  box-shadow: 0 -1px 4px rgba(53, 74, 94, 0.21);
+  background: ${props => `linear-gradient(45deg, #9b59b6 ${props.progress}%, #e74c3c)`};
+`
 
 export const App = () => {
-  const [slotNumber, setSlotNumber] = useState(0)
-  const currentSlot = timeSlots[slotNumber]
-  const [remainingTime, currentTime] = useTimeDisplay(currentSlot)
+  const time = useCurrentTime()
+  const [slot, mentorSlots] = useMentorSlots(startTime)
+  const remainingTime = useRemainingTimeInSlot(10)
 
-  if (!currentSlot) return null
+  const progress = getProgress(remainingTime, 10)
 
-  useEffect(() => {
-    if (shouldUpdateSlot(remainingTime, currentSlot)) {
-      setSlotNumber(slotNumber + 1)
-    }
-  }, [remainingTime])
+  if (slot < 0 || slot > maxSlots) {
+    return (
+      <Container className='app-container'>
+        <div>
+          <div className='current-time-slot'>เวลา {time}</div>
+        </div>
 
-  const consultQueues = Object.entries(queues[currentSlot])
-
-  window.setSlotNumber = setSlotNumber
-
-  function forceNext() {
-    setSlotNumber(slotNumber + 1)
+        <h1 className='no-session-title'>ไม่อยู่ในช่วงการคอนซัลท์</h1>
+      </Container>
+    )
   }
 
   return (
-    <Container className='app-container'>
-      <div>
-        <div className='current-time-slot' onClick={forceNext}>เวลา {currentTime} (ช่วง {currentSlot})</div>
-        <div className='remaining-time'>เหลือเวลา <strong>{remainingTime}</strong> นาที</div>
-      </div>
+    <ProgressContainer progress={100}>
+      <div className="info-wrapper">
+        <div className="info-container">
+          <div>
+            <div className='current-time-slot'><span>เวลา {time}</span> <small>คิวที่ {slot}</small></div>
+            <div className='remaining-time'>เหลือเวลา <strong>{remainingTime}</strong></div>
+          </div>
 
-      <div>{consultQueues.map(([project, mentor]) => (
-        <div key={project} className='project-item'>
-          <strong>{project}</strong> <span className='mentor-name'>พบ{getMentorName(mentor)}</span>
+          <MentorDisplay data={mentorSlots} />
         </div>
-      ))}</div>
-
-      {/*<FlashChanges remainingTime='00:00' />*/}
-    </Container>
+      </div>
+    </ProgressContainer>
   )
 }

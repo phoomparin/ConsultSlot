@@ -1,38 +1,39 @@
-export interface ConsultQueue {
-  slot: number,
-  project: string,
-  mentor: string
+import {allocate} from './allocateSlot'
+
+export const startTime = '14:30'
+
+export const tracks = ['ภูมิ', 'พล & ไดรฟ์', 'จูน & ปาแปง']
+
+export const teams = [
+  'SiamSecure - ศึกษา Use Caase ของการเกิดภัยคุกคาม',
+  'TBKK - ระบบการเรียนรู้ในบริษัท',
+  'Thai Summit Harness - ระบบดิจิทัลสำหรับติดต่องานเคาน์เตอร์',
+  'TOT พัฒนาองค์กร - Dynamic Routing',
+  'TOT ธุรกิจขาย - Sale Pipeline Management',
+  'TOT คลาวด์ - Mobile App Ratchaburi Connect',
+  'TOT คลาวด์ - Intelligent Incident Handling Assistance',
+  'ธกส. - สลากบน Blockchain',
+  'ปตท. - Corporate Data Analytics',
+  'ปตท. - Automatic Vibration Data Analysis',
+  'กลต. - ChatBot เพื่อการให้บริการ',
+  'JTEKT - Production Daily Record System',
+  'JTEKT - Visual Control Board System',
+  'TOT พัฒนาองค์กร - Open Framework for Smart Communication',
+  'G Able - Dashboard for Global Consumer App',
+  'G Able - Data Analysis and Visibility',
+  'G Able - DevOps Data Testing',
+  'กระทรวงวัฒนธรรม - ปรับปรุงระบบรักษาความปลอดภัย'
+]
+
+export const maxSlots = 12
+
+export const slots = allocate(tracks.length, teams.length, maxSlots)
+
+export function getInfoFromSlot(slot: number) {
+  const s = slots[slot]
+
+  if (!s) return null
+
+  return s.map(team => teams[team])
 }
 
-export type ConsultMap = {
-  [name: string]: {
-    [project: string]: string
-  }
-}
-
-export const queues: ConsultMap = {
-  '18:20 - 18:40': {
-    "Gunman and the Witch": "บอนนี่, จั่น, ปรอ",
-    "Paper Piano": "จั่น นิ้งหน่อง นิ",
-    "Pluk Kla": "ฟี่, บวบ"
-  },
-  "18:40 - 19:00": {
-    "Kings of Dungeon": "บอนนี่",
-    "Super Shrimp": "นิ้งหน่อง นิ",
-    "iCrab": "บวบ ฟี่"
-  },
-  '19:00 - 19:20': {
-    "Big Boss": "บอนนี่ นิ้งหน่อง",
-    "จันทรทัศน์ (Lunar Wheel)": "นิ บวบ พฤศ",
-    "มีดกรีดยางสายฟ้า": "ปรอ ฟี่ จั่น",
-  },
-  "19:20 - 19:40": {
-    "Million Words (PPLG)": "บอนนี่ พฤศ",
-    "Intelligent Toilet System (ห้องน้ำเด็กช่าง)": "ฟี่ บวบ",
-    "Soft Silk": "จั่น นิ้งหน่อง"
-  },
-  "19:40 - 20:00": {
-    "Bloody Buddy": "บอนนี่ นิ",
-    "Clean Oyster": "ปรอ ฟี่",
-  },
-}
