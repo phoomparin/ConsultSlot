@@ -72,7 +72,7 @@ export const App = () => {
   }
 
   return (
-    <ProgressContainer progress={100}>
+    <ProgressContainer progress={progress}>
       <div className="info-wrapper">
         <div className="info-container">
           <div>
