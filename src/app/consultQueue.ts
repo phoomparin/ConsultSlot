@@ -1,6 +1,6 @@
 import {allocate} from './allocateSlot'
 
-export const startTime = '14:30'
+export const startTime = '16:00'
 
 export const tracks = ['ภูมิ', 'พล & ไดรฟ์', 'จูน & ปาแปง']
 

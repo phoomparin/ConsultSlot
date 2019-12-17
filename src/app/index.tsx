@@ -59,28 +59,26 @@ export const App = () => {
 
   const progress = getProgress(remainingTime, 10)
 
-  if (slot < 0 || slot > maxSlots) {
-    return (
-      <Container className='app-container'>
-        <div>
-          <div className='current-time-slot'>เวลา {time}</div>
-        </div>
+  let remainingClass = 'remaining-time'
+  if (progress < 18) remainingClass += ' almost-end'
+  if (progress < 10) remainingClass += ' blink'
 
-        <h1 className='no-session-title'>ไม่อยู่ในช่วงการคอนซัลท์</h1>
-      </Container>
-    )
-  }
+  let inSession = slot > 0 && slot <= maxSlots
 
   return (
     <ProgressContainer progress={progress}>
       <div className="info-wrapper">
         <div className="info-container">
           <div>
-            <div className='current-time-slot'><span>เวลา {time}</span> <small>คิวที่ {slot}</small></div>
-            <div className='remaining-time'>เหลือเวลา <strong>{remainingTime}</strong></div>
+            <div className='current-time-slot'><span>เวลา {time}</span> {inSession && <small>คิวที่ {slot}</small>}</div>
+            <div className={remainingClass}>เหลือเวลา <strong>{remainingTime}</strong></div>
           </div>
 
-          <MentorDisplay data={mentorSlots} />
+          {inSession && <MentorDisplay data={mentorSlots} />}
+
+          {!inSession && (
+            <h1 className='no-session-title'>ไม่อยู่ในช่วงการคอนซัลท์</h1>
+          )}
         </div>
       </div>
     </ProgressContainer>
